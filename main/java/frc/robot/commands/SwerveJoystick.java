@@ -60,6 +60,9 @@ public class SwerveJoystick extends CommandBase{
         ySpeed = ylimiter.calculate(ySpeed) * DriveConstants.kPhysicalMaxSpeedMetersPerSecond;
         //get integer input of controller and using that as a percent of 2 pi to figure out how much to turn 
         turningSpeed = (turnLimiter.calculate(turningSpeed) * DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond);
+        xSpeed = SwerveModule.round(xSpeed, 3);
+        ySpeed = SwerveModule.round(ySpeed, 3);
+        turningSpeed = SwerveModule.round(turningSpeed, 3);
 
         ChassisSpeeds chassisSpeeds;
         if(fieldOriented) {

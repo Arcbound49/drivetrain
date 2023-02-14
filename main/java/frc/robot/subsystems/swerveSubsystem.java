@@ -52,7 +52,7 @@ public class swerveSubsystem extends SubsystemBase{
     public final SwerveModulePosition[] swervePos = new SwerveModulePosition[] {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
 
     ADIS16470_IMU gyro = new ADIS16470_IMU();
-    private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(DriveConstants.kDriveKinematics, new Rotation2d(0), swervePos);
+    public final SwerveDriveOdometry odometer = new SwerveDriveOdometry(DriveConstants.kDriveKinematics, new Rotation2d(0), swervePos);
 
     public void SwerveSubsystem() {
         new Thread(() -> {
@@ -88,10 +88,10 @@ public class swerveSubsystem extends SubsystemBase{
     @Override 
     public void periodic() {
         odometer.update(getRotation2d(), swervePos);
-        SmartDashboard.putNumber("back left: Port 2", (backLeft.getTurningPosition())*Math.PI);
-        SmartDashboard.putNumber("back right: Port 0", (backRight.getTurningPosition())*Math.PI);
-        SmartDashboard.putNumber("front left: Port 3", (frontLeft.getTurningPosition())*Math.PI);
-        SmartDashboard.putNumber("front right: Port 1", (frontRight.getTurningPosition())*Math.PI);
+        SmartDashboard.putNumber("back left: Port 2", (backLeft.getTurningPosition()));
+        SmartDashboard.putNumber("back right: Port 0", (backRight.getTurningPosition()));
+        SmartDashboard.putNumber("front left: Port 3", (frontLeft.getTurningPosition()));
+        SmartDashboard.putNumber("front right: Port 1", (frontRight.getTurningPosition()));
     }
 
     public void stopModule() {
