@@ -136,26 +136,6 @@ public class SwerveModule {
                 //turningMotor.setSelectedSensorPosition(absoluteEncoder.getPosition());
             }
 
-            public int getTicks() {
-                return (int)turningMotor.getSelectedSensorPosition();
-            }
-
-            public double ticksToAngle(double ticks) {
-                double angleTicks = ticks % 35.7365875;
-
-                double result = (angleTicks / (35.7365875 / 2)) *180;
-
-                if (result > 180) {
-                    result -= 360;
-                }
-
-                return result;
-            }
-
-            public double getMeasuremnt() {
-                return ticksToAngle(getTicks());
-            }
-
             public SwerveModuleState getState(){
                 return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurningPosition()));
             }
