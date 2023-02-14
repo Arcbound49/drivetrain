@@ -63,7 +63,7 @@ public class SwerveModule {
                 driveEncoder.setPositionConversionFactor(ModuleConstants.kDriveEncoderRPM2MeterPerSec);
                 driveEncoder.setVelocityConversionFactor(ModuleConstants.kDriveEncoderRPM2MeterPerSec);
 
-                turningPidController = new ProfiledPIDController(7, 0, 0, 
+                turningPidController = new ProfiledPIDController(5, 0.1, 0.1, 
                 new TrapezoidProfile.Constraints(DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond, 
                 DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond));
                 //turningPidController.enableContinuousInput(-Math.PI, Math.PI);
@@ -146,17 +146,14 @@ public class SwerveModule {
                     stop();
                     return;
                 }
-
                 state = SwerveModuleState.optimize(state, getState().angle);
-                driveMotor.set(round(state.speedMetersPerSecond, 3) / DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
-                //set turning motor mode to positional change 
-                //this is the part that is not working most likely 
-                //SmartDashboard.putNumber("turning position", getTurningPosition());
+                driveMotor.set(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+
                 final double turnFeed = m_turnFeed.calculate(turningPidController.getSetpoint().velocity);
                 final double turnOut = turningPidController.calculate((getTurningPosition())*((2*Math.PI)/360), state.angle.getRadians());
-                //if (!(getTurningPosition() >= state.angle.getDegrees() - 3 && getTurningPosition() <= state.angle.getDegrees() + 3)) {
-                turningMotor.setVoltage(turnOut + turnFeed);
-                //}
+                if(Math.abs(state.angle.getDegrees() - getTurningPosition()) >= 1) {
+                    turningMotor.setVoltage(turnOut + turnFeed);
+                }
                 SmartDashboard.putNumber("turn out", turnOut);
                 SmartDashboard.putNumber("turn feed", turnFeed);
                 SmartDashboard.putNumber("turning speed input", turnOut + turnFeed);
