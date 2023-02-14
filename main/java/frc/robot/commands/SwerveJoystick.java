@@ -21,7 +21,11 @@ public class SwerveJoystick extends CommandBase{
     private SlewRateLimiter xlimiter, ylimiter;
     private SlewRateLimiter turnLimiter;
     private Supplier<Double> xSpeedF, ySpeedF, turningSpeedF;
-    public SwerveJoystick(swerveSubsystem swerveSubsystem, Supplier<Double> xSpeedF, Supplier<Double> ySpeedF, Supplier<Double> turningSpeedF, boolean fieldOriented) {
+    private Supplier<Boolean> armSupplierUp, armSupplierDown, cubeIntake, coneIntake;
+    public SwerveJoystick(swerveSubsystem swerveSubsystem, Supplier<Double> xSpeedF, 
+    Supplier<Double> ySpeedF, Supplier<Double> turningSpeedF, boolean fieldOriented,
+    Supplier<Boolean> armSupplierUp, Supplier<Boolean> armSupplierDown,
+    Supplier<Boolean> coneIntake, Supplier<Boolean> cubeIntake) {
         //this.fieldOriented = false;
         //this.limiter = new SlewRateLimiter(0.5, -0.5, 0);
         //this.turnLimiter = new SlewRateLimiter(0.4, -0.4, 0);
@@ -30,7 +34,11 @@ public class SwerveJoystick extends CommandBase{
         //this.turningSpeed = controller.getRightX();
         //this.xSpeed = controller.getLeftX();
         //this.ySpeed = controller.getLeftY();
+        this.cubeIntake = cubeIntake;
+        this.coneIntake = coneIntake;
         this.fieldOriented = fieldOriented;
+        this.armSupplierUp = armSupplierUp;
+        this.armSupplierDown = armSupplierDown;
         this.xlimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
         this.ylimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
         this.turnLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond);
@@ -47,7 +55,6 @@ public class SwerveJoystick extends CommandBase{
 
     @Override
     public void execute() {
-
         xSpeed = xSpeedF.get() / 3;
         ySpeed = ySpeedF.get() / 3;
         turningSpeed = (turningSpeedF.get());
@@ -78,10 +85,32 @@ public class SwerveJoystick extends CommandBase{
 
         SmartDashboard.putString("states", moduleStates[0].toString());
         swerveSubsystem.setModuleStates(moduleStates);
+
+        if(armSupplierUp.get() == true) {
+            FourBar.Move(FourBar.getStage()+1);
+        }
+        
+        if(armSupplierDown.get() == true) {
+            FourBar.Move(FourBar.getStage()-1);
+        }
+
+        if(coneIntake.get() == true) {
+            EndEffector.coneIntake();
+        }
+        if (cubeIntake.get() == true) {
+            EndEffector.cubeIntake();
+        }
+        if(cubeIntake.get() == false) {
+            EndEffector.stop();
+        }
+        if(coneIntake.get() == false) {
+            EndEffector.stop();
+        }
     }
 
     @Override
     public void end(boolean interrupted) {
+        FourBar.Move(0);
         swerveSubsystem.stopModule();
     }
 

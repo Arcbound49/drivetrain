@@ -83,6 +83,15 @@ public final class Constants {
             kPhysicalMaxAngularSpeedRadiansPerSecond / 4;
     public static final double kTeleDriveMaxAccelerationUnitsPerSecond = 3;
     public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 3;
+
+    public static final int kArmMotorCANId = 10;
+
+    public static final double[] kArmDegreeStages = {0, 1, 2, 3};
+
+    public static final double kArmVoltMax = 0;
+    public static double kArmCurMax = 0;
+
+    public static int kEndCANId = 11;
   }
 
   public static class OperatorConstants {

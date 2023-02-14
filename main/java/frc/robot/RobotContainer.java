@@ -53,7 +53,13 @@ public class RobotContainer {
 
   public RobotContainer() {
     swerveSubsystem.setDefaultCommand(new SwerveJoystick(swerveSubsystem, 
-    () -> controller.getLeftX(), () -> controller.getLeftY(), () -> controller.getRawAxis(4), false));
+    () -> controller.getLeftX(), 
+    () -> controller.getLeftY(), 
+    () -> controller.getRawAxis(4), false,
+    () -> controller.getCircleButtonPressed(),
+    () -> controller.getCrossButtonPressed(),
+    () -> controller.getSquareButtonPressed(),
+    () -> controller.getTriangleButtonPressed()));
     // Configure the trigger bindings
     configureBindings();
   }

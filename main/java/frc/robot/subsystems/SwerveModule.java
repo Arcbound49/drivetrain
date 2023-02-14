@@ -63,7 +63,7 @@ public class SwerveModule {
                 driveEncoder.setPositionConversionFactor(ModuleConstants.kDriveEncoderRPM2MeterPerSec);
                 driveEncoder.setVelocityConversionFactor(ModuleConstants.kDriveEncoderRPM2MeterPerSec);
 
-                turningPidController = new ProfiledPIDController(5, 0.1, 0.1, 
+                turningPidController = new ProfiledPIDController(0.1, 0.01, 0.01, 
                 new TrapezoidProfile.Constraints(DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond, 
                 DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond));
                 //turningPidController.enableContinuousInput(-Math.PI, Math.PI);
@@ -151,7 +151,8 @@ public class SwerveModule {
 
                 final double turnFeed = m_turnFeed.calculate(turningPidController.getSetpoint().velocity);
                 final double turnOut = turningPidController.calculate((getTurningPosition())*((2*Math.PI)/360), state.angle.getRadians());
-                if(Math.abs(state.angle.getDegrees() - getTurningPosition()) >= 1) {
+                if(Math.abs(state.angle.getDegrees() - getTurningPosition()) >= 1 || 
+                turningPidController.calculate(getTurningPosition()*((2*Math.PI)/360), state.angle.getRadians()) >= 0.1) {
                     turningMotor.setVoltage(turnOut + turnFeed);
                 }
                 SmartDashboard.putNumber("turn out", turnOut);
