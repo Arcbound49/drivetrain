@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.hal.simulation.RoboRioDataJNI;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -92,6 +93,7 @@ public class swerveSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("back right: Port 0", (backRight.getTurningPosition()));
         SmartDashboard.putNumber("front left: Port 3", (frontLeft.getTurningPosition()));
         SmartDashboard.putNumber("front right: Port 1", (frontRight.getTurningPosition()));
+        SmartDashboard.putNumber("BUS Voltage", RoboRioDataJNI.getVInVoltage());
     }
 
     public void stopModule() {

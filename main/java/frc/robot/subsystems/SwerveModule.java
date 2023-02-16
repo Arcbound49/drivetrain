@@ -37,7 +37,6 @@ public class SwerveModule {
     private final ProfiledPIDController turningPidController;
     private final boolean absoluteEncoderReversed;
     private final double absoluteEncoderOffsetRad;
-    private double count = 0;
 
     public SwerveModule(int driveMotorID, int turningMotorId, boolean driveMotorReversed,
             boolean turningMotorReversed, int turningEncoderID, double absoluteEncoderOffset,
@@ -63,7 +62,7 @@ public class SwerveModule {
                 driveEncoder.setPositionConversionFactor(ModuleConstants.kDriveEncoderRPM2MeterPerSec);
                 driveEncoder.setVelocityConversionFactor(ModuleConstants.kDriveEncoderRPM2MeterPerSec);
 
-                turningPidController = new ProfiledPIDController(0.1, 0.01, 0.01, 
+                turningPidController = new ProfiledPIDController(5, 0.01, 0.01, 
                 new TrapezoidProfile.Constraints(DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond, 
                 DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond));
                 //turningPidController.enableContinuousInput(-Math.PI, Math.PI);
@@ -147,13 +146,16 @@ public class SwerveModule {
                     return;
                 }
                 state = SwerveModuleState.optimize(state, getState().angle);
-                driveMotor.set(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+
+                //deactivated to test turning motors only
+                //driveMotor.set(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
 
                 final double turnFeed = m_turnFeed.calculate(turningPidController.getSetpoint().velocity);
                 final double turnOut = turningPidController.calculate((getTurningPosition())*((2*Math.PI)/360), state.angle.getRadians());
-                if(Math.abs(state.angle.getDegrees() - getTurningPosition()) >= 1 || 
-                turningPidController.calculate(getTurningPosition()*((2*Math.PI)/360), state.angle.getRadians()) >= 0.1) {
+                if(Math.abs(state.angle.getDegrees() - getTurningPosition()) >= 1 || turnOut >= 0.75) {
                     turningMotor.setVoltage(turnOut + turnFeed);
+                } else {
+                    turningMotor.setVoltage(0);
                 }
                 SmartDashboard.putNumber("turn out", turnOut);
                 SmartDashboard.putNumber("turn feed", turnFeed);

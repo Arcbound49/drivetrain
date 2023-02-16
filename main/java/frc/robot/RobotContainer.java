@@ -23,6 +23,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -52,14 +53,18 @@ public class RobotContainer {
         //this.ySpeed = controller.getLeftY();
 
   public RobotContainer() {
+    //at this point it's just the main controller with custom commands as we can guarantee and update
     swerveSubsystem.setDefaultCommand(new SwerveJoystick(swerveSubsystem, 
     () -> controller.getLeftX(), 
     () -> controller.getLeftY(), 
     () -> controller.getRawAxis(4), false,
-    () -> controller.getCircleButtonPressed(),
-    () -> controller.getCrossButtonPressed(),
-    () -> controller.getSquareButtonPressed(),
-    () -> controller.getTriangleButtonPressed()));
+    () -> controller.getRawButtonPressed(11),
+    () -> controller.getRawButtonPressed(12),
+    () -> controller.getRawAxis(5),
+    () -> controller.getRawAxis(6),
+    () -> controller.getRawButtonPressed(7),
+    () -> controller.getRawButtonPressed(8),
+    () -> controller.getCircleButtonPressed()));
     // Configure the trigger bindings
     configureBindings();
   }
@@ -100,6 +105,5 @@ public class RobotContainer {
       SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(trajectory, swerveSubsystem::getPose, DriveConstants.kDriveKinematics, xController, yController, thetaController, swerveSubsystem::setModuleStates, swerveSubsystem);
 
       return new SequentialCommandGroup(new InstantCommand(() -> swerveSubsystem.resetOdometer(trajectory.getInitialPose())), swerveControllerCommand, new InstantCommand(() -> swerveSubsystem.stopModule()));
-      
   }
 }

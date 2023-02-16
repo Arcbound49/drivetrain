@@ -86,7 +86,7 @@ public final class Constants {
 
     public static final int kArmMotorCANId = 10;
 
-    public static final double[] kArmDegreeStages = {0, 1, 2, 3};
+    public static final double[] kArmDegreeStages = {0, 1, 2, 90};
 
     public static final double kArmVoltMax = 0;
     public static double kArmCurMax = 0;

@@ -14,13 +14,7 @@ public class FourBar {
     private static int currentStage = 0;
 
     public static void Move(int stage) {
-        if (ArmEncoder.getPosition()+10 >= DriveConstants.kArmDegreeStages[3] 
-        || 
-        ArmMotor.getBusVoltage() > DriveConstants.kArmVoltMax
-        ||
-        ArmMotor.getOutputCurrent() > DriveConstants.kArmCurMax) {
-            return;
-        }
+        inBounds();
         switch(stage) {
             case 1:
             ArmMotor.set(armController.calculate(ArmEncoder.getPosition(), DriveConstants.kArmDegreeStages[0]));
@@ -47,6 +41,25 @@ public class FourBar {
             ArmMotor.set(armController.calculate(ArmEncoder.getPosition(), 0));
             setStage(0);
             break;
+        }
+    }
+
+    public static void MoveUp(double Speed) {
+        inBounds();
+        ArmMotor.set(Speed/10);
+    }
+    public static void MoveDown(double Speed) {
+        inBounds();
+        ArmMotor.set(Speed/10);
+    }
+
+    private static void inBounds() {
+        if (ArmEncoder.getPosition()+10 >= DriveConstants.kArmDegreeStages[3] 
+        || 
+        ArmMotor.getBusVoltage() > DriveConstants.kArmVoltMax
+        ||
+        ArmMotor.getOutputCurrent() > DriveConstants.kArmCurMax) {
+            return;
         }
     }
 

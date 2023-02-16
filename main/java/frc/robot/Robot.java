@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -34,6 +36,11 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    ////AddressableLED m_led = new AddressableLED(0);
+    ////AddressableLEDBuffer m_LedBuffer = new AddressableLEDBuffer(23);
+    ////m_LedBuffer.setRGB(0, 255, 0, 0);
+////
+    ////m_led.setData(m_LedBuffer);
   }
 
   /**

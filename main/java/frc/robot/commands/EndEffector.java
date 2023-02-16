@@ -11,12 +11,20 @@ public class EndEffector {
     //clockwise for cube counter clockwise for cone
     private static CANSparkMax endMotor = new CANSparkMax(DriveConstants.kEndCANId, MotorType.kBrushless);
 
-    public static void cubeIntake() {
-        endMotor.set(0.5);
+    public static void cubeIntake(double speed) {
+        endMotor.set(speed);
     }
 
-    public static void coneIntake() {
-        endMotor.set(-0.5);
+    public static void coneIntake(double speed) {
+        endMotor.set(-speed);
+    }
+    
+    public static void cubeOut() {
+        endMotor.set(-0.15);
+    }
+
+    public static void coneOut() {
+        endMotor.set(0.15);
     }
 
     public static void stop() {
