@@ -90,10 +90,9 @@ public class swerveSubsystem extends SubsystemBase{
     public void periodic() {
         odometer.update(getRotation2d(), swervePos);
         SmartDashboard.putNumber("back left: Port 2", (backLeft.getTurningPosition()));
-        SmartDashboard.putNumber("back right: Port 0", (backRight.getTurningPosition()));
+        //SmartDashboard.putNumber("back right: Port 0", (backRight.getTurningPosition()));
         SmartDashboard.putNumber("front left: Port 3", (frontLeft.getTurningPosition()));
         SmartDashboard.putNumber("front right: Port 1", (frontRight.getTurningPosition()));
-        SmartDashboard.putNumber("BUS Voltage", RoboRioDataJNI.getVInVoltage());
     }
 
     public void stopModule() {

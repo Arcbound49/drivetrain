@@ -20,11 +20,11 @@ public class EndEffector {
     }
     
     public static void cubeOut() {
-        endMotor.set(-0.15);
+        endMotor.set(-0.5);
     }
 
     public static void coneOut() {
-        endMotor.set(0.15);
+        endMotor.set(0.5);
     }
 
     public static void stop() {

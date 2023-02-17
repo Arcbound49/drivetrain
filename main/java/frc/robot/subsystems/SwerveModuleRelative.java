@@ -11,6 +11,7 @@ import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.hal.simulation.RoboRioDataJNI;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -26,32 +27,33 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
 
 
-public class SwerveModule {
+public class SwerveModuleRelative {
     
     private final CANSparkMax driveMotor;
     private final WPI_VictorSPX turningMotor;
 
     private final RelativeEncoder driveEncoder;
-    private final edu.wpi.first.wpilibj.AnalogInput turningEncoder;
+    private final Encoder turnEncoder;
 
     private final ProfiledPIDController turningPidController;
     private final boolean absoluteEncoderReversed;
     private final double absoluteEncoderOffsetRad;
 
-    public SwerveModule(int driveMotorID, int turningMotorId, boolean driveMotorReversed,
+    public SwerveModuleRelative(int driveMotorID, int turningMotorId, boolean driveMotorReversed,
             boolean turningMotorReversed, int turningEncoderID, double absoluteEncoderOffset,
             boolean absoluteEncoderReversed){
 
                 this.absoluteEncoderOffsetRad = absoluteEncoderOffset;
                 this.absoluteEncoderReversed = absoluteEncoderReversed;
-                turningEncoder = new edu.wpi.first.wpilibj.AnalogInput(turningEncoderID);
 
                 driveMotor = new CANSparkMax(driveMotorID, MotorType.kBrushless);
                 turningMotor = new WPI_VictorSPX(turningMotorId);
 
+                turnEncoder = new Encoder(turningEncoderID, turningEncoderID+1);
+
                 turningMotor.configFactoryDefault();
                 turningMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-                turningMotor.setSelectedSensorPosition(getTurningPosition() / 35.7365875 * (Math.pow(Math.PI, 2)));
+                turningMotor.setSelectedSensorPosition(getTurningPosition());
                 //already initialized 
                 //turningEncoder = new AnalogEncoder(turningEncoderID);
                 driveMotor.setInverted(driveMotorReversed);
@@ -62,7 +64,7 @@ public class SwerveModule {
                 driveEncoder.setPositionConversionFactor(ModuleConstants.kDriveEncoderRPM2MeterPerSec);
                 driveEncoder.setVelocityConversionFactor(ModuleConstants.kDriveEncoderRPM2MeterPerSec);
 
-                turningPidController = new ProfiledPIDController(10, 0.01, 0.01, 
+                turningPidController = new ProfiledPIDController(1, 0.01, 0.01, 
                 new TrapezoidProfile.Constraints(DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond, 
                 DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond));
                 //turningPidController.enableContinuousInput(-Math.PI, Math.PI);
@@ -74,25 +76,16 @@ public class SwerveModule {
                 return driveEncoder.getPosition();
             }
 
-            public double getTurnTick() {
-                SmartDashboard.putNumber("volt", turningEncoder.getVoltage());
-                SmartDashboard.putNumber("bus", RobotController.getVoltage5V());
-                return turningEncoder.getVoltage() / RobotController.getVoltage5V();
-            }
-
             public double getTurningPosition(){
-                //return turningEncoder.getValue() / 36;
-                //magic number made by forgetting we where multiplying by pi later so 35*pi is right
-                double x = (getTurnTick() * 360) - absoluteEncoderOffsetRad;
-                x = round(x, 2);
-                if (x < 0) {
-                    x += 360;
+                double tick = turnEncoder.getDistance() % 360;
+                if (tick > 180) {
+                    tick -= 360;
                 }
-                if(x > 180) {
-                    x -= 360;
+                if (tick < -180) {
+                    tick += 360;
                 }
-                return round(x,2);
-                //return (180 * ((turningEncoder.getValue() - count))/1024);
+
+                return Math.floor(tick);
             }
 
             public double getDriveVelocity(){
@@ -139,7 +132,7 @@ public class SwerveModule {
                 return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurningPosition()));
             }
             
-            private final SimpleMotorFeedforward m_turnFeed = new SimpleMotorFeedforward(2, 0.5);
+            private final SimpleMotorFeedforward m_turnFeed = new SimpleMotorFeedforward(1, 0.5);
             public void setDesiredState(SwerveModuleState state) {
                 if (Math.abs(state.speedMetersPerSecond) < 0.01) {
                     stop();
@@ -148,10 +141,13 @@ public class SwerveModule {
                 state = SwerveModuleState.optimize(state, getState().angle);
 
                 //deactivated to test turning motors only
-                driveMotor.set(state.speedMetersPerSecond);
+                driveMotor.set(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+
+                driveMotor.set(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+
                 final double turnFeed = m_turnFeed.calculate(turningPidController.getSetpoint().velocity);
                 final double turnOut = turningPidController.calculate((getTurningPosition())*((2*Math.PI)/360), state.angle.getRadians());
-                if(Math.abs(getTurningPosition() - state.angle.getDegrees()) >= 3 && Math.abs(turnOut + turnFeed) >= 1) {
+                if(Math.abs(state.angle.getDegrees() - getTurningPosition()) >= 1 || turnOut >= 0.75) {
                     turningMotor.setVoltage(turnOut + turnFeed);
                 } else {
                     turningMotor.setVoltage(0);
@@ -162,10 +158,6 @@ public class SwerveModule {
                 //turningMotor.set(ControlMode.PercentOutput, 0.3);
                 //turningMotor.set(VictorSPXControlMode.PercentOutput, state.angle.getRadians());
                 
-            }
-
-            public double getRawEncoder() {
-                return turningEncoder.getValue();
             }
 
             public static double round(double num, int dec) {

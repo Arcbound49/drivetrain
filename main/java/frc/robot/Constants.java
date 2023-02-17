@@ -56,8 +56,8 @@ public final class Constants {
 
     public static final boolean kFrontLeftDriveEncoderReversed = false;
     public static final boolean kBackLeftDriveEncoderReversed = false;
-    public static final boolean kFrontRightDriveEncoderReversed = true;
-    public static final boolean kBackRightDriveEncoderReversed = true;
+    public static final boolean kFrontRightDriveEncoderReversed = false;
+    public static final boolean kBackRightDriveEncoderReversed = false;
 
     public static final int kFrontLeftDriveAbsoluteEncoderPort = 3;
     public static final int kBackLeftDriveAbsoluteEncoderPort = 2;
@@ -70,28 +70,33 @@ public final class Constants {
     public static final boolean kBackRightDriveAbsoluteEncoderReversed = false;
 
     //actually degrees 
-    public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = 28+90;//fl
-    public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = 71+90;//bl
-    public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = 121.5+90;//fr
-    public static final double kBackRightDriveAbsoluteEncoderOffsetRad = 234+90;//br
+    public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = 31+90;//fl
+    public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = 67+90;//bl
+    public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = -65+90;//fr
+    public static final double kBackRightDriveAbsoluteEncoderOffsetRad = 0;//br
 
     public static final double kPhysicalMaxSpeedMetersPerSecond = 5;
-    public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * Math.PI;
+    public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = Math.PI/2;
 
     public static final double kTeleDriveMaxSpeedMetersPerSecond = kPhysicalMaxSpeedMetersPerSecond / 4;
-    public static final double kTeleDriveMaxAngularSpeedRadiansPerSecond = //
+    public static final double kTeleDriveMaxAngularSpeedRadiansPerSecond =
             kPhysicalMaxAngularSpeedRadiansPerSecond / 4;
     public static final double kTeleDriveMaxAccelerationUnitsPerSecond = 3;
     public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 3;
 
     public static final int kArmMotorCANId = 10;
 
-    public static final double[] kArmDegreeStages = {0, 1, 2, 90};
+    public static final double[] kArmDegreeStages = {800, 900, 1000, 1100};
 
-    public static final double kArmVoltMax = 0;
-    public static double kArmCurMax = 0;
+    public static final double kArmVoltMax = 100;
+    public static double kArmCurMax = 100;
 
     public static int kEndCANId = 11;
+
+    public static final int kFLRID = 0;
+    public static final int kFRRID = 2;
+    public static final int kBLRID = 4;
+    public static final int kBRRID = 6;
   }
 
   public static class OperatorConstants {

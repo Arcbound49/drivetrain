@@ -19,11 +19,12 @@ public class Camera {
     public static final int pixelWidth = 320;
     public static double angleX;
     public static double angleY;
+    public static long tv;
     public Camera(){
         //https://docs.limelightvision.io/en/latest/networktables_api.html
         //NetworkTableInstance.getDefault().getTable("limelight").getEntry("<variablename>").getDouble(0); 
         NetworkTable table = NetworkTableInstance.getDefault().getTable("Limelight");
-        long tv = table.getEntry("tv").getInteger(0);
+        tv = table.getEntry("tv").getInteger(0);
         //tx and ty is offset from centre not pixel cords 
         double tx = table.getEntry("tx").getDouble(0);
         double ty = table.getEntry("ty").getDouble(0);
@@ -59,9 +60,11 @@ public class Camera {
          * SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
          */
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
-        while (angleX > angleSoft || angleX < angleSoft) {
-            chassisSpeeds.omegaRadiansPerSecond = angleSoft/10;
-            SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+        if (tv == 1) {
+            while (angleX > angleSoft || angleX < angleSoft) {
+                chassisSpeeds.omegaRadiansPerSecond = angleSoft/10;
+                SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+            }
         }
     }
 }

@@ -58,13 +58,13 @@ public class RobotContainer {
     () -> controller.getLeftX(), 
     () -> controller.getLeftY(), 
     () -> controller.getRawAxis(4), false,
-    () -> controller.getRawButtonPressed(11),
-    () -> controller.getRawButtonPressed(12),
-    () -> controller.getRawAxis(5),
-    () -> controller.getRawAxis(6),
-    () -> controller.getRawButtonPressed(7),
-    () -> controller.getRawButtonPressed(8),
-    () -> controller.getCircleButtonPressed()));
+    () -> controller.getCrossButton(),
+    () -> controller.getTriangleButton(),
+    () -> controller.getL2Axis(),
+    () -> controller.getSquareButton(),
+    () -> controller.getL1Button(),
+    () -> controller.getR1Button(),
+    () -> controller.getCircleButton()));
     // Configure the trigger bindings
     configureBindings();
   }

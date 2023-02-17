@@ -5,6 +5,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 
 public class FourBar {
@@ -46,11 +47,11 @@ public class FourBar {
 
     public static void MoveUp(double Speed) {
         inBounds();
-        ArmMotor.set(Speed/10);
+        ArmMotor.set(Speed);
     }
     public static void MoveDown(double Speed) {
         inBounds();
-        ArmMotor.set(Speed/10);
+        ArmMotor.set(-Speed);
     }
 
     private static void inBounds() {

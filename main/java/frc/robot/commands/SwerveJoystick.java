@@ -21,12 +21,12 @@ public class SwerveJoystick extends CommandBase{
     private boolean fieldOriented;
     private SlewRateLimiter xlimiter, ylimiter;
     private SlewRateLimiter turnLimiter;
-    private Supplier<Double> xSpeedF, ySpeedF, turningSpeedF, cubeIntake, coneIntake;
-    private Supplier<Boolean> armSupplierUp, armSupplierDown, coneOut, cubeOut, autoAngle;
+    private Supplier<Double> xSpeedF, ySpeedF, turningSpeedF, coneIntake;
+    private Supplier<Boolean> armSupplierUp, armSupplierDown, coneOut, cubeOut, autoAngle, cubeIntake;
     public SwerveJoystick(swerveSubsystem swerveSubsystem, Supplier<Double> xSpeedF, 
     Supplier<Double> ySpeedF, Supplier<Double> turningSpeedF, boolean fieldOriented,
     Supplier<Boolean> armSupplierUp, Supplier<Boolean> armSupplierDown,
-    Supplier<Double> coneIntake, Supplier<Double> cubeIntake,
+    Supplier<Double> coneIntake, Supplier<Boolean> cubeIntake,
     Supplier<Boolean> coneOut, Supplier<Boolean> cubeOut,
     Supplier<Boolean> autoAngle) {
         //this.fieldOriented = false;
@@ -89,33 +89,38 @@ public class SwerveJoystick extends CommandBase{
 
         SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
 
-        SmartDashboard.putString("states", moduleStates[0].toString());
+        SmartDashboard.putString("states fl", moduleStates[0].toString());
+        SmartDashboard.putString("states bl", moduleStates[1].toString());
+        SmartDashboard.putString("states fr", moduleStates[2].toString());
+        //SmartDashboard.putString("states br", moduleStates[3].toString());
+        SmartDashboard.putNumber("front right turn", moduleStates[2].angle.getDegrees());
         swerveSubsystem.setModuleStates(moduleStates);
 
+        SmartDashboard.putBoolean("cross", armSupplierUp.get());
         if(armSupplierUp.get() == true) {
-            FourBar.MoveUp(0.3);
+            FourBar.MoveUp(0.1);
         } else if(armSupplierDown.get() == true) {
-            FourBar.MoveDown(0.3);
+            FourBar.MoveDown(0.1);
         } else {
             FourBar.MoveDown(0);
             FourBar.MoveUp(0);
         }
 
-        //if(coneIntake.get() >= 0.3) {
-        //    EndEffector.coneIntake(0.5);
-        //} else if (cubeIntake.get() >= 0.3) {
-        //    EndEffector.cubeIntake(0.3);
-        //} else if(coneOut.get() == true) {
-        //    EndEffector.coneOut();
-        //} else if (cubeOut.get() == true) {
-        //    EndEffector.cubeOut();
-        //} else {
-        //    EndEffector.stop();
-        //}
-
-        if (autoAngle.get() == true) {
-            Camera.softDriveTargeting();
+        if(coneIntake.get() >= 0.3) {
+            EndEffector.coneIntake(1);
+        } else if (cubeIntake.get() == true) {
+            EndEffector.cubeIntake(0.3);
+        } else if(coneOut.get() == true) {
+            EndEffector.coneOut();
+        } else if (cubeOut.get() == true) {
+            EndEffector.cubeOut();
+        } else {
+            EndEffector.stop();
         }
+
+        //if (autoAngle.get() == true) {
+        //    Camera.softDriveTargeting();
+        //}
     }
 
     @Override
